@@ -1,0 +1,276 @@
+/* =========================================
+   Combo Shop – Football Accessories Store
+   ========================================= */
+
+:root {
+  --green-dark: #1a5c2a;
+  --green-mid: #2d8c4e;
+  --green-light: #4caf76;
+  --grass: #5cb85c;
+  --accent: #f5a623;
+  --accent-dark: #d4891b;
+  --white: #ffffff;
+  --light-gray: #f8f9fa;
+  --border: #dee2e6;
+  --text-dark: #212529;
+  --text-muted: #6c757d;
+  --shadow: 0 2px 12px rgba(0,0,0,.1);
+  --radius: 10px;
+}
+
+/* Base */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--light-gray);
+  color: var(--text-dark);
+}
+
+a { color: var(--green-mid); }
+a:hover { color: var(--green-dark); }
+
+/* Navbar */
+.navbar-brand {
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
+}
+
+.navbar-brand .brand-icon { margin-right: 6px; }
+
+.navbar-dark.bg-success {
+  background: linear-gradient(135deg, var(--green-dark), var(--green-mid)) !important;
+}
+
+.nav-link { font-weight: 500; }
+
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  font-size: 0.65rem;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 60%, var(--green-light) 100%);
+  color: var(--white);
+  padding: 80px 0;
+  clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
+  margin-bottom: 40px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+
+.hero p { font-size: 1.2rem; opacity: .9; }
+
+/* Discount Banner */
+.combo-banner {
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 16px 24px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Product Card */
+.product-card {
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform .2s ease, box-shadow .2s ease;
+  overflow: hidden;
+  height: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.15);
+}
+
+.product-card .card-img-top {
+  height: 200px;
+  object-fit: cover;
+  background-color: #e9ecef;
+}
+
+.product-card .product-placeholder {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e9ecef, #dee2e6);
+  font-size: 3.5rem;
+}
+
+.product-card .badge-category {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background-color: var(--green-mid);
+  color: var(--white);
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+
+.product-card .price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--green-dark);
+}
+
+/* Combo Builder */
+.combo-builder-sidebar {
+  position: sticky;
+  top: 80px;
+}
+
+.combo-item-check {
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.combo-item-check:hover { background-color: #f0faf4; }
+.combo-item-check.selected { background-color: #d4edda; border-color: var(--green-mid) !important; }
+
+.discount-tier {
+  border-left: 4px solid var(--border);
+  padding-left: 12px;
+  margin-bottom: 12px;
+  transition: border-color .2s;
+}
+
+.discount-tier.active { border-left-color: var(--grass); }
+.discount-tier.achieved { border-left-color: var(--green-dark); background: #f0faf4; border-radius: 0 6px 6px 0; }
+
+/* Cart */
+.cart-summary {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  position: sticky;
+  top: 80px;
+}
+
+.cart-item-row { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.cart-item-row:last-child { border-bottom: none; }
+
+.discount-applied {
+  background: linear-gradient(90deg, #d4edda, #c3e6cb);
+  border: 1px solid var(--grass);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: var(--green-dark);
+  font-weight: 600;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--green-mid);
+  border-color: var(--green-mid);
+}
+.btn-primary:hover {
+  background-color: var(--green-dark);
+  border-color: var(--green-dark);
+}
+
+.btn-accent {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--white);
+  font-weight: 600;
+}
+
+.btn-accent:hover {
+  background-color: var(--accent-dark);
+  border-color: var(--accent-dark);
+  color: var(--white);
+}
+
+.btn-outline-success {
+  border-color: var(--green-mid);
+  color: var(--green-mid);
+}
+.btn-outline-success:hover {
+  background-color: var(--green-mid);
+  border-color: var(--green-mid);
+}
+
+/* Section Titles */
+.section-title {
+  font-weight: 800;
+  color: var(--green-dark);
+  position: relative;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 50%;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* Category Pills */
+.category-pill {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 50px;
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  color: var(--text-dark);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all .15s;
+  margin: 4px;
+}
+
+.category-pill:hover, .category-pill.active {
+  background-color: var(--green-mid);
+  border-color: var(--green-mid);
+  color: var(--white);
+}
+
+/* Footer */
+footer {
+  background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+  color: rgba(255,255,255,.85);
+  padding: 40px 0 20px;
+  margin-top: 60px;
+}
+
+footer h5 { color: var(--white); font-weight: 700; }
+footer a { color: rgba(255,255,255,.75); text-decoration: none; }
+footer a:hover { color: var(--white); }
+
+/* Order success */
+.success-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green-mid), var(--green-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: var(--white);
+  margin: 0 auto 24px;
+  box-shadow: 0 4px 20px rgba(45,140,78,.4);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .hero { clip-path: none; padding: 50px 0; }
+  .hero h1 { font-size: 2rem; }
+  .combo-builder-sidebar { position: static; }
+}

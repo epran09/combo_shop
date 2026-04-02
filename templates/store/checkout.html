@@ -1,0 +1,94 @@
+{% extends 'store/base.html' %}
+{% block title %}Checkout – Combo Shop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="section-title mb-4">Checkout</h2>
+  <div class="row g-4">
+    <!-- Form -->
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm p-4" style="border-radius:14px;">
+        <h5 class="fw-bold mb-4"><i class="bi bi-person-lines-fill me-2 text-success"></i>Delivery Details</h5>
+        <form method="post">
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label class="form-label fw-semibold">First Name</label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}
+                <div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label fw-semibold">Last Name</label>
+              {{ form.last_name }}
+              {% if form.last_name.errors %}
+                <div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Email</label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Address</label>
+              {{ form.address }}
+              {% if form.address.errors %}
+                <div class="invalid-feedback d-block">{{ form.address.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-sm-8">
+              <label class="form-label fw-semibold">City</label>
+              {{ form.city }}
+              {% if form.city.errors %}
+                <div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-sm-4">
+              <label class="form-label fw-semibold">Postal Code</label>
+              {{ form.postal_code }}
+              {% if form.postal_code.errors %}
+                <div class="invalid-feedback d-block">{{ form.postal_code.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg w-100 mt-4">
+            <i class="bi bi-check-circle me-2"></i>Place Order
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="col-lg-5">
+      <div class="cart-summary">
+        <h5 class="fw-bold mb-3">Order Summary</h5>
+        {% for item in cart.get_items %}
+        <div class="d-flex justify-content-between mb-2 small">
+          <span class="text-muted">{{ item.product.name }} × {{ item.quantity }}</span>
+          <span>£{{ item.get_total }}</span>
+        </div>
+        {% endfor %}
+        <hr>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">Subtotal</span>
+          <span class="fw-bold">£{{ subtotal }}</span>
+        </div>
+        {% if discount_amount %}
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-success fw-bold"><i class="bi bi-tag-fill me-1"></i>Discount ({{ discount_rule.discount_percent }}%)</span>
+          <span class="text-success fw-bold">−£{{ discount_amount }}</span>
+        </div>
+        {% endif %}
+        <div class="d-flex justify-content-between border-top pt-3">
+          <span class="fw-bold fs-5">Total</span>
+          <span class="price fs-4">£{{ total }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

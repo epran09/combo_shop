@@ -1,0 +1,179 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block title %}Combo Builder – Combo Shop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex align-items-center gap-3 mb-2">
+    <span class="fs-1">⚡</span>
+    <div>
+      <h1 class="fw-bold mb-0">Combo Builder</h1>
+      <p class="text-muted mb-0">Select multiple football accessories and save with automatic combo discounts.</p>
+    </div>
+  </div>
+
+  <!-- Discount Tiers -->
+  <div class="card border-0 shadow-sm mb-4 p-4" style="border-radius:14px; background: linear-gradient(135deg, #f0faf4, #e6f4ea);">
+    <h5 class="fw-bold text-success mb-3"><i class="bi bi-lightning-charge-fill me-1"></i>Available Discounts</h5>
+    <div class="row g-3">
+      {% for discount in combo_discounts %}
+      <div class="col-auto">
+        <div class="discount-tier d-flex align-items-center gap-3 p-3 bg-white rounded shadow-sm"
+             data-discount-tier="{{ discount.pk }}"
+             data-min-items="{{ discount.min_items }}"
+             data-discount-percent="{{ discount.discount_percent }}">
+          <div class="fs-2">
+            {% if discount.min_items == 2 %}🎯{% elif discount.min_items == 3 %}🔥{% else %}💥{% endif %}
+          </div>
+          <div>
+            <div class="fw-bold">{{ discount.min_items }}+ items</div>
+            <div class="text-success fw-bold fs-5">{{ discount.discount_percent }}% OFF</div>
+            {% if discount.description %}<small class="text-muted">{{ discount.description }}</small>{% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Product Picker -->
+    <div class="col-lg-8">
+      <!-- Category filter tabs -->
+      <div class="mb-3">
+        <a href="{% url 'combo_builder' %}" class="category-pill active me-1" id="filter-all">All</a>
+        {% for cat in categories %}
+          <a href="#" class="category-pill me-1" data-filter="{{ cat.slug }}">{{ cat }}</a>
+        {% endfor %}
+      </div>
+
+      <div class="row g-3" id="product-grid">
+        {% for product in products %}
+        <div class="col-sm-6 col-md-4 product-filter-item" data-category="{{ product.category.slug }}">
+          <div class="card combo-item-check border shadow-sm"
+               style="border-radius:12px; cursor:pointer;"
+               data-product-id="{{ product.pk }}"
+               data-product-name="{{ product.name }}"
+               data-product-price="{{ product.price }}">
+            <div class="card-body p-3">
+              <div class="d-flex align-items-start gap-3">
+                <div class="fs-2 flex-shrink-0">
+                  {% if product.category.name == 'socks' %}🧦
+                  {% elif product.category.name == 'shin_guards' %}🛡️
+                  {% elif product.category.name == 'ankle_guards' %}🦵
+                  {% elif product.category.name == 'gloves' %}🧤
+                  {% elif product.category.name == 'headbands' %}👑
+                  {% elif product.category.name == 'compression_sleeves' %}💪
+                  {% elif product.category.name == 'sports_tape' %}🩹
+                  {% elif product.category.name == 'bags' %}🎒
+                  {% elif product.category.name == 'water_bottles' %}💧
+                  {% else %}⚽
+                  {% endif %}
+                </div>
+                <div class="flex-grow-1 min-w-0">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <h6 class="fw-bold mb-1 lh-sm" style="font-size:.875rem;">{{ product.name }}</h6>
+                    <input type="checkbox" class="form-check-input combo-checkbox flex-shrink-0 ms-2" readonly>
+                  </div>
+                  <span class="badge bg-success-subtle text-success border border-success-subtle small">{{ product.category }}</span>
+                  <div class="fw-bold text-success mt-1">£{{ product.price }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+          <p class="text-muted">No products available yet.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Combo Summary Sidebar -->
+    <div class="col-lg-4">
+      <div class="combo-builder-sidebar">
+        <div class="cart-summary">
+          <h5 class="fw-bold mb-3"><i class="bi bi-basket3-fill me-2 text-success"></i>Your Combo</h5>
+
+          <div id="combo-message" class="alert alert-info small py-2 d-none mb-3"></div>
+
+          <table class="table table-sm mb-3">
+            <tr>
+              <td class="text-muted">Items selected</td>
+              <td class="text-end fw-bold" id="combo-total-items">0</td>
+            </tr>
+            <tr>
+              <td class="text-muted">Subtotal</td>
+              <td class="text-end" id="combo-subtotal">£0.00</td>
+            </tr>
+            <tr id="combo-discount-row" style="display:none;">
+              <td class="text-success fw-bold">Combo Discount</td>
+              <td class="text-end text-success fw-bold" id="combo-discount"></td>
+            </tr>
+            <tr class="border-top">
+              <td class="fw-bold">Total</td>
+              <td class="text-end fw-bold price fs-5" id="combo-total">£0.00</td>
+            </tr>
+          </table>
+
+          <!-- Add all to cart via form -->
+          <form id="combo-add-form" method="post" action="{% url 'cart_detail' %}">
+            {% csrf_token %}
+            <input type="hidden" name="add_combo" value="1">
+          </form>
+
+          <button id="combo-add-all-btn" class="btn btn-accent w-100 py-2" disabled>
+            <i class="bi bi-cart-plus me-2"></i>Add All to Cart
+          </button>
+          <a href="{% url 'product_list' %}" class="btn btn-outline-secondary w-100 mt-2">
+            <i class="bi bi-arrow-left me-1"></i>Back to Shop
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/combo.js' %}"></script>
+<script>
+// Category filter for combo builder
+document.querySelectorAll('[data-filter]').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const filter = this.dataset.filter;
+    document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelectorAll('.product-filter-item').forEach(item => {
+      item.style.display = (!filter || item.dataset.category === filter) ? '' : 'none';
+    });
+  });
+});
+document.getElementById('filter-all')?.addEventListener('click', function(e) {
+  e.preventDefault();
+  document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+  this.classList.add('active');
+  document.querySelectorAll('.product-filter-item').forEach(item => item.style.display = '');
+});
+
+// Handle combo "Add All to Cart" – post each product via fetch then redirect
+document.getElementById('combo-add-all-btn')?.addEventListener('click', function() {
+  const selected = document.querySelectorAll('.combo-item-check.selected');
+  if (selected.length === 0) return;
+  const productIds = [];
+  selected.forEach(card => productIds.push(card.dataset.productId));
+
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  Promise.all(productIds.map(id => {
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', csrfToken);
+    formData.append('next', '/cart/');
+    return fetch('/cart/add/' + id + '/', {method: 'POST', body: formData, redirect: 'follow'});
+  })).then(() => {
+    window.location.href = '/cart/';
+  });
+});
+</script>
+{% endblock %}
+{% endblock %}

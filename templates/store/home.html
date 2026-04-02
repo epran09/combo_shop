@@ -1,0 +1,145 @@
+{% extends 'store/base.html' %}
+{% block title %}Combo Shop – Football Accessories{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero text-center">
+  <div class="container">
+    <h1>⚽ Football Accessories</h1>
+    <p class="lead">Socks, shin guards, gloves &amp; more – build a combo and <strong>save up to 15%!</strong></p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap mt-4">
+      <a href="{% url 'product_list' %}" class="btn btn-light btn-lg px-4 fw-bold">
+        <i class="bi bi-grid-3x3-gap-fill me-2"></i>Shop Now
+      </a>
+      <a href="{% url 'combo_builder' %}" class="btn btn-accent btn-lg px-4">
+        <i class="bi bi-stars me-2"></i>Build a Combo
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Combo Discount Banner -->
+{% if combo_discounts %}
+<div class="container mb-5">
+  <div class="combo-banner">
+    <i class="bi bi-lightning-charge-fill me-2"></i>
+    <strong>Combo Discounts:</strong>
+    {% for d in combo_discounts %}
+      {{ d.min_items }}+ items = {{ d.discount_percent }}% off{% if not forloop.last %} &nbsp;|&nbsp; {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Categories -->
+<div class="container mb-5">
+  <h2 class="section-title mb-4">Browse by Category</h2>
+  <div class="row g-3">
+    {% for cat in categories %}
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="{% url 'product_list' %}?category={{ cat.slug }}" class="text-decoration-none">
+        <div class="card border-0 shadow-sm text-center p-3 h-100 category-card" style="border-radius:12px; transition: transform .2s;">
+          <div class="fs-1 mb-2">
+            {% if cat.name == 'socks' %}🧦
+            {% elif cat.name == 'shin_guards' %}🛡️
+            {% elif cat.name == 'ankle_guards' %}🦵
+            {% elif cat.name == 'gloves' %}🧤
+            {% elif cat.name == 'headbands' %}👑
+            {% elif cat.name == 'compression_sleeves' %}💪
+            {% elif cat.name == 'sports_tape' %}🩹
+            {% elif cat.name == 'bags' %}🎒
+            {% elif cat.name == 'water_bottles' %}💧
+            {% else %}⚽
+            {% endif %}
+          </div>
+          <div class="fw-600 text-dark">{{ cat }}</div>
+          <small class="text-muted">{{ cat.products.count }} product{{ cat.products.count|pluralize }}</small>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Featured Products -->
+<div class="container mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="section-title mb-0">Featured Products</h2>
+    <a href="{% url 'product_list' %}" class="btn btn-outline-success btn-sm">View All <i class="bi bi-arrow-right"></i></a>
+  </div>
+  <div class="row g-4">
+    {% for product in featured_products %}
+    <div class="col-sm-6 col-md-4 col-lg-3">
+      <div class="card product-card">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+        {% else %}
+          <div class="product-placeholder">
+            {% if product.category.name == 'socks' %}🧦
+            {% elif product.category.name == 'shin_guards' %}🛡️
+            {% elif product.category.name == 'ankle_guards' %}🦵
+            {% elif product.category.name == 'gloves' %}🧤
+            {% elif product.category.name == 'headbands' %}👑
+            {% elif product.category.name == 'compression_sleeves' %}💪
+            {% elif product.category.name == 'sports_tape' %}🩹
+            {% elif product.category.name == 'bags' %}🎒
+            {% elif product.category.name == 'water_bottles' %}💧
+            {% else %}⚽
+            {% endif %}
+          </div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <span class="badge-category mb-2 d-inline-block">{{ product.category }}</span>
+          <h6 class="card-title fw-bold">{{ product.name }}</h6>
+          <p class="card-text text-muted small flex-grow-1">{{ product.description|truncatechars:80 }}</p>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <span class="price">£{{ product.price }}</span>
+            <form method="post" action="{% url 'add_to_cart' product.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{% url 'product_list' %}">
+              <button class="btn btn-primary btn-sm" {% if product.stock == 0 %}disabled{% endif %}>
+                <i class="bi bi-cart-plus"></i>
+                {% if product.stock == 0 %}Out of Stock{% else %}Add{% endif %}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-muted">No products available yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- How Combos Work -->
+<div class="container mb-5">
+  <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #f0faf4, #e6f4ea); border-radius:16px;">
+    <div class="card-body p-5">
+      <h2 class="section-title mb-4 text-center d-block" style="display:block!important;">How Combo Discounts Work</h2>
+      <div class="row g-4 text-center">
+        <div class="col-md-4">
+          <div class="fs-1">🛒</div>
+          <h5 class="fw-bold mt-2">1. Pick Your Gear</h5>
+          <p class="text-muted small">Browse socks, shin guards, gloves and more football accessories.</p>
+        </div>
+        <div class="col-md-4">
+          <div class="fs-1">⚡</div>
+          <h5 class="fw-bold mt-2">2. Build a Combo</h5>
+          <p class="text-muted small">Add 2+ items to your cart or use the <a href="{% url 'combo_builder' %}">Combo Builder</a>.</p>
+        </div>
+        <div class="col-md-4">
+          <div class="fs-1">💰</div>
+          <h5 class="fw-bold mt-2">3. Save Instantly</h5>
+          <p class="text-muted small">Discounts are applied automatically at checkout. The more you buy, the more you save!</p>
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <a href="{% url 'combo_builder' %}" class="btn btn-accent btn-lg px-5">
+          <i class="bi bi-stars me-2"></i>Try the Combo Builder
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

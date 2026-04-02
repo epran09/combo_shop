@@ -1,0 +1,126 @@
+{% extends 'store/base.html' %}
+{% block title %}{{ product.name }} – Combo Shop{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'product_list' %}">Shop</a></li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'product_list' %}?category={{ product.category.slug }}">{{ product.category }}</a>
+      </li>
+      <li class="breadcrumb-item active">{{ product.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-5">
+    <!-- Image -->
+    <div class="col-md-5">
+      <div class="card border-0 shadow-sm overflow-hidden" style="border-radius:16px;">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}" style="max-height:400px; object-fit:cover;">
+        {% else %}
+          <div class="product-placeholder" style="height:350px; font-size:6rem;">
+            {% if product.category.name == 'socks' %}🧦
+            {% elif product.category.name == 'shin_guards' %}🛡️
+            {% elif product.category.name == 'ankle_guards' %}🦵
+            {% elif product.category.name == 'gloves' %}🧤
+            {% elif product.category.name == 'headbands' %}👑
+            {% elif product.category.name == 'compression_sleeves' %}💪
+            {% elif product.category.name == 'sports_tape' %}🩹
+            {% elif product.category.name == 'bags' %}🎒
+            {% elif product.category.name == 'water_bottles' %}💧
+            {% else %}⚽
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Details -->
+    <div class="col-md-7">
+      <span class="badge bg-success mb-2">{{ product.category }}</span>
+      <h1 class="fw-bold mb-2">{{ product.name }}</h1>
+      <p class="text-muted mb-3">{{ product.description }}</p>
+
+      <div class="d-flex align-items-center gap-4 mb-4">
+        <span class="price" style="font-size:2rem;">£{{ product.price }}</span>
+        {% if product.stock > 0 %}
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+            <i class="bi bi-check-circle me-1"></i>In Stock ({{ product.stock }})
+          </span>
+        {% else %}
+          <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2">
+            <i class="bi bi-x-circle me-1"></i>Out of Stock
+          </span>
+        {% endif %}
+      </div>
+
+      {% if product.stock > 0 %}
+      <form method="post" action="{% url 'add_to_cart' product.pk %}">
+        {% csrf_token %}
+        <div class="d-flex gap-3 flex-wrap">
+          <button type="submit" class="btn btn-primary btn-lg px-5">
+            <i class="bi bi-cart-plus me-2"></i>Add to Cart
+          </button>
+          <a href="{% url 'combo_builder' %}" class="btn btn-outline-success btn-lg">
+            <i class="bi bi-stars me-2"></i>Add to Combo
+          </a>
+        </div>
+      </form>
+      {% endif %}
+
+      <div class="card border-0 bg-light mt-4 p-3" style="border-radius:12px;">
+        <h6 class="fw-bold text-success mb-2"><i class="bi bi-lightning-charge-fill me-1"></i>Combo Discount</h6>
+        <p class="small text-muted mb-0">
+          Add this with other accessories to save more! 2+ items → 5% off, 3+ items → 10% off, 5+ items → 15% off.
+          <a href="{% url 'combo_builder' %}">Build a combo →</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  {% if related_products %}
+  <div class="mt-5">
+    <h4 class="section-title mb-4">More in {{ product.category }}</h4>
+    <div class="row g-4">
+      {% for rp in related_products %}
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="card product-card">
+          <div class="product-placeholder" style="height:150px; font-size:3rem;">
+            {% if rp.category.name == 'socks' %}🧦
+            {% elif rp.category.name == 'shin_guards' %}🛡️
+            {% elif rp.category.name == 'ankle_guards' %}🦵
+            {% elif rp.category.name == 'gloves' %}🧤
+            {% elif rp.category.name == 'headbands' %}👑
+            {% elif rp.category.name == 'compression_sleeves' %}💪
+            {% elif rp.category.name == 'sports_tape' %}🩹
+            {% elif rp.category.name == 'bags' %}🎒
+            {% elif rp.category.name == 'water_bottles' %}💧
+            {% else %}⚽
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <h6 class="card-title fw-bold">
+              <a href="{% url 'product_detail' rp.slug %}" class="text-dark text-decoration-none">{{ rp.name }}</a>
+            </h6>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="price">£{{ rp.price }}</span>
+              <form method="post" action="{% url 'add_to_cart' rp.pk %}">
+                {% csrf_token %}
+                <button class="btn btn-primary btn-sm" {% if rp.stock == 0 %}disabled{% endif %}>
+                  <i class="bi bi-cart-plus"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
